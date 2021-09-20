@@ -1,0 +1,47 @@
+name: Build
+on: [ push, pull_request ]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: maven
+          server-id: ossrh
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      
+      - name: Build and deploy with Maven
+        run: |
+          # If this is a main build then deploy at the end
+          if [ "$GITHUB_REF" == "refs/heads/main" ] && [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
+            mvn -Dstyle.color=always -B -U -P sign deploy
+          # Otherwise just build and test
+          else
+            mvn -Dstyle.color=always -B -U verify
+          fi
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Build site
+        run: mvn -Dstyle.color=always -B -U site site:stage post-site
+      - name: Deploy site to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        if: github.ref == 'ref/head/main'
+        with:
+          branch: gh-pages
+          folder: target/staging/cics-bundle-maven-plugin
+      
+        
