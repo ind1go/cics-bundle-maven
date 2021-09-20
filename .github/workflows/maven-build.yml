@@ -27,18 +27,17 @@ jobs:
           # If this is a main build then deploy at the end
           if [ "$GITHUB_REF" == "refs/heads/main" ] && [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
             mvn -Dstyle.color=always -B -U -P sign deploy
-            mvn site site:stage post-site
           # Otherwise just build and test
           else
             mvn -Dstyle.color=always -B -U verify
-            mvn site site:stage post-site;
           fi
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-
-      - name: Deploy to GitHub Pages
+      - name: Build site
+        run: mvn -Dstyle.color=always -B -U site site:stage post-site
+      - name: Deploy site to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
         if: github.ref == 'ref/head/main'
         with:
