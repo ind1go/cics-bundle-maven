@@ -16,6 +16,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <license-plugin-version>2.0.0</license-plugin-version>
+    <jacoco-version>0.8.7</jacoco-version>
   </properties>
 
   <distributionManagement>
@@ -184,6 +185,26 @@
           <artifactId>maven-install-plugin</artifactId>
           <version>3.0.0-M1</version>
         </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-version}</version>
+          <executions>
+            <execution>
+              <id>default-prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -302,6 +323,7 @@
     <module>cics-bundle-reactor-archetype</module>
     <module>cics-bundle-deploy-reactor-archetype</module>
     <module>cics-bundle-maven-site</module>
+    <module>cics-bundle-maven-reports</module>
     <module>samples</module>
   </modules>
 </project>

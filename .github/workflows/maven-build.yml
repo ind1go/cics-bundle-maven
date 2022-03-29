@@ -34,6 +34,12 @@ jobs:
         if: github.ref != 'refs/heads/main'
         run: mvn -Dstyle.color=always -B -U verify
 
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-aggregate
+          path: cics-bundle-maven-reports/target/site/jacoco-aggregate
+
       - name: Build site
         run: mvn -Dstyle.color=always -B -U site site:stage post-site
 

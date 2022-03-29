@@ -7,6 +7,7 @@
   </parent>
   <artifactId>cics-bundle-maven-site</artifactId>
   <packaging>pom</packaging>
+  <name>CICS Bundle Maven Site</name>
 
   <dependencies>
     <dependency>
